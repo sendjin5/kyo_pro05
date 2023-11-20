@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 페이지</title>
+</head>
+<body>
+
+<table style="display:block;">
+    <button type="button" id="btn1">전체지역</button>
+    <button type="button" id="btn2">해당지역</button>
+    <thead>
+        <tr>
+            <th>지역</th>
+            <th>썸네일</th>
+            <th>상품 제목</th>
+            <th>아이디</th>
+            <th>가격</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pro : ${proAllList}" id="proAllList" style="display: block">
+        <td th:text="${pro.addr1}"></td>
+        <td th:text="${pro.thumbnail}"></td>
+        <td ><a th:href="@{/product/Get(pno=${pro.pno})}" th:text="${pro.title}" ></a></td>
+        <td th:text="${pro.userId}"></td>
+        <td th:text="${pro.price}"></td>
+        <td><a th:href="@{/product/Del(pno=${pro.getPno()})}">삭제하기</a></td>
+    </tr>
+    <tr th:each="sel : ${proSelList}" id="proSelList" style="display: none">
+        <td th:text="${sel.addr1}"></td>
+        <td th:text="${sel.thumbnail}"></td>
+        <td ><a th:href="@{/product/Get(pno=${sel.pno})}" th:text="${sel.title}" ></a></td>
+        <td th:text="${sel.userId}"></td>
+        <td th:text="${sel.price}"></td>
+        <td><a th:href="@{/product/Del(pno=${sel.getPno()})}">삭제하기</a></td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <a th:href="@{/product/Add}">상품등록</a>
+    <a th:href="@{/product/TemAdd}">임시등록 리스트</a>
+</div>
+</body>
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $("#btn1").click(function () {
+            $("#proAllList").css("display", "block");
+            $("#proSelList").css("display", "none");
+        })
+    })
+        $(document).ready(function() {
+        $("#btn2").click(function () {
+            $("#proAllList").css("display", "none");
+            $("#proSelList").css("display", "block");
+        });
+    });
+</script>
+</html>

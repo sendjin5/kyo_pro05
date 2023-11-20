@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 폼</title>
+    <script type="text/javascript" src="/static/cleditor/jquery.cleditor.js"></script>
+    <link rel="stylesheet" href="/static/cleditor/jquery.cleditor.css">
+</head>
+<body>
+    <div class="container">
+        <h2>보드 등록</h2>
+        <form th:action="@{/recomment/Add}" autocomplete="off" method="post">
+            <div>
+                <label th:for="id_no">번호</label>
+                <input type="number" name="id_no" placeholder="id_no" required>
+            </div>
+            <div>
+                <label th:for="comment">내용</label>
+                <textarea name="comment" id="comment" class="textarea" rows="8" cols="100" maxlength="200" required></textarea>
+            </div>
+            <div>
+                <button type="submit">등록</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

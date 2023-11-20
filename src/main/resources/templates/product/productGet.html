@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/logo.png}">
+    <link rel="stylesheet" href="/css/pure-min.css">
+    <link rel="stylesheet" href="/css/grids-responsive-min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <meta id="_csrf" name="_csrf" content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}"/>
+    <title>메인 페이지</title>
+</head>
+<body>
+
+<table>
+    <tbody>
+        <tr>
+            <th>책 제목</th>
+            <td th:utext="${board.title}"></td>
+            <th>책 내용</th>
+            <td th:utext="${board.content}"></td>
+            <th>책 저자</th>
+            <td th:utext="${board.author}"></td>
+            <th>날짜</th>
+            <td th:utext="${board.resdate}"></td>
+            <th>파일</th>
+            <img th:src="@{/upload/${files.saveFolder }/${files.saveNm }}" width="400" height="225"><br>
+            <a th:href="@{/upload/${files.saveFolder }/${files.saveNm }}" download="[[${files.saveNm }]]">ㅇㅇ</a>
+    </tbody>
+</table>
+<ul>
+    <li>제목 : <span th:utext="${board.title}"></span></li>
+    <li>내용 : <span th:utext="${board.content}"></span></li>
+</ul>
+
+<div>
+    <a th:href="@{/board/Del(no=${board.no})}">삭제하기</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!--        layout:decorate="~{layout/layout1.html }">-->
+<!--<div sec:authorize="isAuthenticated()"></div>-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/logo.png}">
+    <link rel="stylesheet" href="/css/pure-min.css">
+    <link rel="stylesheet" href="/css/grids-responsive-min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <meta id="_csrf" name="_csrf" content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}"/>
+    <title>메인 페이지</title>
+</head>
+<body>
+<header th:replace="layout/layout1 :: header"></header>
+
+
+<div sec:authorize="isAuthenticated()">
+<div sec:authentication="principal">
+    <p>로그인이 되었다는 문자가 뜰 것이야</p>
+</div>
+</div>
+    <h1>메인 페이지</h1>
+
+    <th:block th:fragment="header"></th:block>
+
+    <br>
+
+    <a th:href="@{/home}">홈</a>
+    <br>
+
+<a th:href="@{/login}">로그인</a>
+<a th:href="@{/registration}">회원가입</a>
+    <br>
+    <form th:action="@{login}" method="get">
+        <button type="sumit">로그인</button>
+    </form>
+    <form th:action="@{registration}" method="get">
+        <button type="sumit">회원가입</button>
+    </form>
+    <br>
+    <form th:action="@{board/List}" method="get">
+        <button type="sumit">Board</button>
+    </form>
+    <a th:href="@{/product/List(addr1='가산동')}">Product</a>
+
+
+
+
+<!--    <p th:if ="${empty principal}">-->
+<!--        <button type="button" onclick="location.href='/join'" class="pure-button pure-button-primary">가입하기</button>-->
+<!--        <a href="${path0}/login" class="pure-button pure-button-primary">로그인</a>-->
+<!--    </p>-->
+<!--    <p th:if ="${!empty principal}">-->
+<!--        <h2>[[${principal}]]</h2>-->
+<!--        <button type="button" onclick="location.href='/updateForm?id=${principal}'" class="pure-button pure-button-primary">수정하기</button>-->
+<!--        <form action="/logout" method="post">-->
+<!--            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
+<!--            <button type="submit" class="pure-button pure-button-primary">로그아웃</button>-->
+<!--        </form>-->
+<!--        <button type="button" onclick="location.href='/withdraw?id=${principal}'" class="pure-button pure-button-primary">탈퇴하기</button>-->
+<!--    </p>-->
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 폼</title>
+    <script type="text/javascript" src="/static/cleditor/jquery.cleditor.js"></script>
+    <link rel="stylesheet" href="/static/cleditor/jquery.cleditor.css">
+</head>
+<body>
+    <div class="container">
+        <h2>보드 등록</h2>
+        <form th:action="@{/pruduct/Add}" name="fm" autocomplete="off" method="post" >
+            <div>
+                <label th:for="userNo">회원 내용</label>
+                <input type="text" name="userNo" placeholder="userNo" required>
+                <input type="text" name="userId" placeholder="userId" required>
+            <div>
+                <label th:for="title">제목</label>
+                <input type="text" name="title" placeholder="title" required>
+            </div>
+            <div>
+                <label th:for="content">내용</label>
+                <textarea name="content" id="content" class="textarea" rows="8" cols="100" maxlength="1400" required></textarea>
+                <script>
+                    $(document).ready(function() {
+                        $("#content").cleditor();
+                    });
+                </script>
+            </div>
+            <div>
+            <label th:for="author">저자</label>
+            <input type="text" name="author" placeholder="author" required>
+           </div>
+            <div>
+                <label for="thumbnail">파일 업로드(10MB 이하)</label>
+                <input class="input" type="thumbnail" name="thumbnail" id="thumbnail" multiple="true">
+            </div>
+            <div>
+                <button type="submit">보드 등록</button>
+                <button type="button" onclick="reco()">자주쓰는 답변</button>
+
+            </div>
+        </form>
+    </div>
+
+    <script>
+
+        function reco() {
+            let popupOption = "width=650px, height=550px, top=150px, left=300px, scrollbar=yes";
+            let popupUrl = "/recomment/List";
+            window.open(popupUrl, 'child', popupOption);
+        }
+
+    </script>
+</body>
+</html>
