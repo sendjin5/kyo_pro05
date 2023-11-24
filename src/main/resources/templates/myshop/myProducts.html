@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <th:block th:replace="/include/head :: head" ></th:block>
+  <title>마이페이지</title>
+  <style>
+    .dashboard-container .btn {
+      background-color: inherit;
+      color: inherit;
+      padding: 0 3.5rem;
+      line-height: 3;
+    }
+  </style>
+</head>
+<body>
+<th:block th:replace="/include/header :: header"></th:block>
+
+<!--==================================
+=            User Profile            =
+===================================-->
+<section class="dashboard section">
+  <!-- Container Start -->
+  <div class="container">
+    <!-- Row Start -->
+    <div class="row">
+      <div class="col-lg-4">
+        <th:block th:replace="/include/sidebar :: sidebar('products')"></th:block>
+      </div>
+      <div class="col-lg-8">
+        <!-- Recently Favorited -->
+        <div class="widget dashboard-container my-adslist">
+          <h3 class="widget-header">상품</h3>
+          <div th:if="${#lists.isEmpty(products)}" class="text-center">판매 상품이 존재하지 않습니다.</div>
+
+          <div th:unless="${#lists.isEmpty(products)}">
+            <div th:replace="/include/searchList.html :: fragment-search('/myshop/products', 'pname:상품명')"></div>
+            <!-- include하는 main화면에서 options를 넘겨줄 때 하나의 옵션을 ,(반점)으로 구분한다. -->
+            <!-- 이때 콜론 왼쪽에는 DB 테이블의 컬럼 이름이, 오른쪽에는 사용자에게 표시될 이름을 입력한다. -->
+            <p class="text-dark font-weight-bold">전체 [[${page.postTotal}]]개</p>
+
+            <table class="table product-dashboard-table">
+              <thead>
+              <tr>
+                <th>이미지</th>
+                <th>상품명</th>
+                <th class="text-center">카테고리</th>
+                <th class="text-center">관리</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="product : ${products}">
+                <td class="product-thumb">
+                  <!--<img th:src="@{/images/classimage/user/user-thumb.jpg}" alt="회원사진" class="rounded-circle">-->
+                  <!--th:src="@{/upload/} + ${list.fileDataList[0].savePath}+'/'+${list.fileDataList[0].saveName}-->
+                  <th:block th:if="${!product.fileDataList.isEmpty()}">
+                    <img width="80px" height="auto" th:src="@{|/upload/${product.fileDataList[0].savePath}/${product.fileDataList[0].saveName}|}" alt="Card image cap">
+                  </th:block>
+
+                  <th:block th:if="${product.fileDataList.isEmpty()}">
+                    <img width="80px" height="auto" th:src="@{/images/no_image.png}">
+                  </th:block>
+                  <!--<img width="80px" height="auto" th:src="@{|/upload/${product.fileDataList[0].savePath}/${product.fileDataList[0].saveName}|}" alt="image description"></td>-->
+                <td class="product-details">
+                  <a th:href="@{/product/detail(pno=${product.pno})}">
+                    <h3 class="title" th:text="${product.pname}">
+                    </h3>
+                  </a>
+
+                  <!--<span th:with="formattedPrice=${#numbers.formatDecimal(product.price, 3, 'COMMA')}">
+                    <strong>가격</strong>[[${formattedPrice}]]원
+                  </span>-->
+                  <span><strong>가격</strong>[[${#numbers.formatInteger(product.price, 0, 'COMMA')}]]원</span>
+                  <span><strong>등록일</strong><time th:text="${#dates.format(product.createAt, 'yyyy-MM-dd')}"></time></span>
+                  <div th:switch="${product.status}">
+                    <span th:case="'SALE'" class="status text-success"><strong>상태</strong>판매중</span>
+                    <span th:case="'RESERVED'" class="status text-warning"><strong>상태</strong>예약중</span>
+                    <span th:case="'OUT'" class="status text-danger"><strong>상태</strong>판매완료</span>
+                  </div>
+                  <!--<span class="location"><strong>주소</strong>[[${product.proaddr}]]</span>-->
+                </td>
+                <td class="product-category"><span class="categories" th:text="${product.cateName}"></span></td>
+                <td class="action" data-title="Action">
+                  <div class="">
+                    <ul class="list-inline justify-content-center">
+                      <li class="list-inline-item">
+                        <a th:href="@{/product/edit(pno=${product.pno})}" class="edit" data-toggle="tooltip" data-placement="top" title="수정" >
+                          <i class="fa fa-pencil"></i>
+                        </a>
+                      </li>
+                      <li class="list-inline-item">
+                        <a th:href="@{/product/delete(pno=${product.pno})}" class="delete" data-toggle="tooltip" data-placement="top" title="삭제" >
+                          <i class="fa fa-trash"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <th:block th:if="${not #lists.isEmpty(products)}">
+          <div th:replace="/include/pagination.html :: fragment-pagination('/myshop/products')"></div>
+        </th:block>
+
+      </div>
+    </div>
+    <!-- Row End -->
+  </div>
+  <!-- Container End -->
+</section>
+
+<th:block th:replace="/include/footer :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+</body>
+</html>

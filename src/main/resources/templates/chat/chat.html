@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="/include/head :: head"></div>
+
+    <title>채팅</title>
+    <style>
+        .chat-box {
+            margin: 0;
+        }
+        .chat-time {
+            display: inline;
+            margin-left: 10px;
+            color: gray;
+            font-size: 10px;
+        }
+        .close-tag {
+            color: inherit;
+        }
+        .chat-message-me {
+            border-radius: 15px; background-color: green; float: right; width: fit-content; max-width: 400px;
+        }
+        .chat-message-me p {
+            color: white;
+        }
+        .chat-message-other{
+            border-radius: 15px; background-color: rgba(57, 192, 237,.2); max-width: 400px;
+        }
+        .chat-message{
+            white-space: pre-wrap;
+        }
+        #roomName {color: white;}
+    </style>
+</head>
+<body>
+
+<div class="card m-1" style="border-radius: 15px;">
+    <div class="d-flex p-2" style="justify-content: space-around;">
+        <div th:text="${product.pname}"></div>
+        <div th:if="${product.price eq 0}" th:text="나눔"></div>
+        <div th:if="${product.price ne 0}">[[${product.price}]] 원</div>
+        <select name="status" id="product-status">
+            <option value="SALE" th:selected="${product.status == 'SALE'}">판매중</option>
+            <option value="RESERVED" th:selected="${product.status == 'RESERVED'}">예약중</option>
+            <option value="OUT" th:selected="${product.status == 'OUT'}">판매완료</option>
+        </select>
+    </div>
+</div>
+
+<div id="chatRoom" style="margin-top: 1rem;">
+    <div class="m-1">
+        <div class="card" style="border-radius: 15px;">
+            <div class="card-header d-flex justify-content-center align-items-center p-3 bg-info text-white border-bottom-0" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                <p class="mb-0 fw-bold" id="roomName" th:text="${roomName}" />
+            </div>
+            <div class="card-body">
+                <div id="msgArea" style="height: 400px; overflow-y: auto;">
+                    <th:block th:each="c : ${chats}">
+                        <div class="d-flex flex-row justify-content-end mb-4" th:if="${c.sender eq session.sid}">
+                            <div class="chat-box text-end">
+                                <div class="chat-author m-0 p-1" th:text="${c.sender}"><p class="chat-time" th:text="${c.time}" /></div>
+                                <div class="p-3 chat-message-me">
+                                    <p class="chat-message small mb-0" th:text="${c.message}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row justify-content-start mb-4" th:if="${c.sender != session.sid}">
+                            <div class="chat-box">
+                                <div class="chat-author m-0 p-1" th:text="${c.sender}"><p class="chat-time" th:text="${c.time}" /></div>
+                                <div class="p-3 chat-message-other">
+                                    <p class="chat-message small mb-0" th:text="${c.message}" />
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+
+                <textarea class="form-control" id="chat-input" placeholder="Type Your message and Enter" aria-label="chat input" rows="2"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+
+<script th:inline="javascript">
+    $('#product-status').on('change', function() {
+        // 기존에 선택된 옵션의 'selected' 속성을 제거
+        $('#product-status option:selected').removeAttr('selected');
+        // 변경된 옵션을 선택
+        $(this).find('option:selected').attr('selected', 'selected');
+        let pno = [[${product.pno}]];
+        let status = $(this).val();
+
+        $.ajax({
+            type: 'get',
+            url: '/chat/productUpdate', // 서버 URL 입력
+            data: { pno: pno, status: status}, // 전송할 데이터 설정
+            success: function(response) {
+                // 성공적으로 서버에 전송된 후 실행되는 코드
+            },
+            error: function(xhr, status, error) {
+                // 전송 중 오류가 발생한 경우 실행되는 코드
+            }
+        });
+    });
+
+    let roomNo = /*[[${room.roomNo}]]*/ 'default';
+    let roomName = /*[[${roomName}]]*/ 'default';
+
+    let ws;
+
+    // 사용자 이름 설정. session에 저장된 이름
+    let username = /*[[${session.sid}]]*/ 'default';
+    if (username === "null") {
+        username = "guest";
+    }
+
+
+    // 자동 스크롤 함수
+    function scrollToBottom() {
+        var chatDiv = document.getElementById("msgArea");
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    // Ctrl 에서 ObjectMapper 를 사용하여 ChatMessage 형태로 바꾸므로, chat 필드를 가진 json 으로 만들어 보내기
+    function makeChat(chatNo, type, username, message){
+        var currentTime = new Date();
+        var options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+        var time = new Intl.DateTimeFormat('ko-KR', options).format(currentTime);
+
+        let chat = {
+            "chatNo": chatNo,
+            "receiver": roomName,
+            "type": type,
+            "roomNo": roomNo,
+            "sender": username,
+            "message": message,
+            "time": time
+        };
+
+        var jsonstr = JSON.stringify(chat)
+        return jsonstr;
+    }
+
+    function send(jsonstr){
+        ws.send(jsonstr);
+    }
+
+    $(document).ready(async function(){
+        scrollToBottom();
+        ws = new WebSocket("ws://"+location.host+"/socket?roomNo="+roomNo+"&memId="+username);
+
+        ws.onopen = function(e){ // 연결 시 실행
+            /*var str = username + "님이 입장하셨습니다.";
+            send(makeChat("ENTER", roomNo, username, str));*/
+            // console.log("info : connection opened.");
+        }
+
+        ws.onmessage = function(response){ // 서버로부터 메세지를 받았을 때 실행
+            $.ajax({
+                type: "POST",
+                url: "/chat/readChat",
+                data: {message: response.data, user: username},
+                success: function (data) {
+                }
+            });
+
+            var msg = JSON.parse(response.data);
+
+            if(msg.roomNo===roomNo){
+                let newMsg = ``;
+
+                if(msg.type==="TALK"){
+                    if(msg.sender===username){
+                        newMsg = `<div class="d-flex flex-row justify-content-end mb-4">
+                                                        <div class="chat-box text-end">
+                                                            <div class="chat-author m-0 p-1">${msg.sender}<p class="chat-time">${msg.time}</p></div>
+                                                            <div class="p-3 chat-message-me">
+                                                                <p class="chat-message small mb-0">${msg.message}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>`;
+                    } else{
+                        newMsg = `<div class="d-flex flex-row justify-content-start mb-4">
+                                                        <div class="chat-box">
+                                                            <div class="chat-author m-0 p-1">${msg.sender}<p class="chat-time">${msg.time}</p></div>
+                                                            <div class="p-3 chat-message-other">
+                                                                <p class="chat-message small mb-0">${msg.message}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>`;
+                    }
+
+                } else {
+                    newMsg = `<div class="d-flex flex-row justify-content-center mb-4"><div class="chat-box">${msg.message}</div></div>`
+                }
+
+                $("#msgArea").append(newMsg);
+                scrollToBottom();
+
+            }
+        }
+
+        ws.onclose = function(e){ // 연결 종료 시 실행
+            console.log("info : connection closed");
+        };
+
+        ws.onerror = function(e){
+            console.log("error")
+        };
+    })
+
+    $("#chat-input").keypress(function(event){
+        if(event.keyCode===13 && !event.shiftKey){
+            event.preventDefault(); // 기본 엔터 동작 방지
+
+            let msg = $("#chat-input").val();
+
+            if(msg===""){
+                return false;
+            } else {
+                // 일단 데이터베이스 채팅 저장
+                var jsonstr = makeChat(0, "TALK", username, msg);
+                $.ajax({
+                    type: "POST",
+                    url: "/chat/insertChat",
+                    data: {message: jsonstr},
+                    success: function (response) {
+                        // 데이터베이스에 채팅이 제대로 저장된 경우에만 send
+                        send(makeChat(response.chatNo, "TALK", username, msg));
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                });
+            }
+
+            $("#chat-input").val("");
+
+        }
+    })
+
+
+
+    window.addEventListener('beforeunload', async function (e) {
+        await closeRoom();
+        // 페이지를 떠날 때 실행할 함수
+    });
+</script>
+</html>

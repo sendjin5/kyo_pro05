@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 폼</title>
+    <th:block th:replace="include/head :: head" ></th:block>
+</head>
+<body>
+<th:block th:replace="include/header :: header" ></th:block>
+<div class="container_List">
+    <div class="main-panel">
+        <div class="content-wrapper">
+            <h1>공지사항 수저하기</h1>
+            <div class="card p-3">
+                <form th:action="@{/notice/Edit}" name="fm" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label th:for="title">제목</label>
+                        <input class="form-control" type="text" name="title" placeholder="title" th:value="${notice.title}" >
+                        <input type="hidden" name="no" th:value="${notice.no}" >
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="content">내용</label>
+                        <textarea name="content" id="content" class="form-control textarea" rows="8" cols="100" maxlength="1400" >[[${notice.content}]]</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <img th:src="@{/images/} + ${notice.img }" width="400" height="225">
+                        <label for="uploadFiles">기존이미지</label>
+                        <input class="form-control input" type="file" name="uploadFiles" id="uploadFiles" multiple="true">
+                        <input type="hidden" name="img" id="img" th:value="${notice.img }">
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">보드 등록</button>
+                        <button type="button" onclick="reco()" class="btn btn-info" style="float: left;">자주쓰는 답변</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        function reco() {
+            let popupOption = "width=650px, height=550px, top=150px, left=300px, scrollbar=yes";
+            let popupUrl = "/recomment/List";
+           window.open(popupUrl, 'child', popupOption);
+        }
+    </script>
+<th:block th:replace="/include/footer :: footer"></th:block>
+
+</body>
+</html>

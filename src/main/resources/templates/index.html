@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="include/head :: head" ></th:block>
+    <title>타이틀</title>
+</head>
+<body>
+<th:block th:replace="include/header :: header"></th:block>
+
+<!--===============================
+=            Hero Area            =
+================================-->
+
+<section class="hero-area bg-1 text-center overly">
+    <!-- Container Start -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Header Contetnt -->
+                <div class="content-block">
+                    <h1> 당신이 찾는 물건 이곳에!!! </h1>
+                    <p>동네라서 가능한 모든 것 <br> 당근에서 가까운 이웃과 함께해요. </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container End -->
+</section>
+
+<!--===========================================
+=            Popular deals section            =
+============================================-->
+<section class="py-5 bg-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-title">
+                    <h2>인기 상품을 추천해드려요👀</h2>
+                    <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas, magnam.</p>-->
+                </div>
+            </div>
+        </div>
+
+        <div class="product-grid-list">
+            <div class="row mt-30">
+                <div class="col-lg-4 col-md-6" th:each="product : ${popularProducts}">
+                    <!-- product card -->
+                    <div class="product-item bg-light">
+                        <div class="card">
+                            <div class="thumb-content">
+                                <div class="price">[[${#numbers.formatInteger(product.price, 0, 'COMMA')}]]원</div>
+                                <a th:href="@{/product/detail(pno=${product.pno})}">
+                                    <!--th:src="@{/images/heart_before.png}"-->
+                                    <th:block th:if="${!product.fileDataList.isEmpty()}">
+                                        <img class="card-img-top img-fluid" style="height: 255px;" th:src="@{|/upload/${product.fileDataList[0].savePath}/${product.fileDataList[0].saveName}|}" alt="Card image cap">
+                                    </th:block>
+                                    <th:block th:if="${product.fileDataList.isEmpty()}">
+                                        <img class="card-img-top img-fluid" style="height: 255px;" th:src="@{/images/no_image.png}">
+                                    </th:block>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title"><a th:href="@{/product/detail(pno=${product.pno})}" th:text="${product.pname}"></a></h4>
+                                <ul class="list-inline product-meta">
+                                    <li class="list-inline-item">
+                                        <!--<a href="single.html">
+                                            <i class="fa fa-folder-open-o"></i>Electronics
+                                        </a>-->
+                                        <p><i class="fa fa-folder-open-o mr-1" aria-hidden="true"></i>[[${product.cateName}]]</p>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <p><i class="fa fa-calendar mr-1" aria-hidden="true"></i>[[${#dates.format(product.createAt, 'yyyy-MM-dd')}]]</p>
+                                    </li>
+
+                                </ul>
+                                <!--<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!</p>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" th:each="product : ${popularProducts.size() == 0 }">
+                    <h2 style="text-align: center"> 희망하는 물품을 판매해주세요. </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="call-to-action overly bg-3 section-sm">
+    <!-- Container Start -->
+    <div class="container">
+        <div class="row justify-content-md-center text-center">
+            <div class="col-md-8">
+                <div class="content-holder">
+                    <h2>T셀파몰로 중고거래를 시작하세요!</h2>
+                    <ul class="list-inline mt-30">
+                        <li class="list-inline-item"><a class="btn btn-main" th:href="@{/product/insert}">판매하기</a></li>
+                        <li class="list-inline-item"><a class="btn btn-secondary" th:href="@{/product/list}">상품 목록</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container End -->
+</section>
+
+
+<th:block th:replace="include/footer :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+<script th:src="@{/js/slick.min.js}"></script>
+
+</body>
+</html>

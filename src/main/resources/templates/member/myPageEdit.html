@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <th:block th:replace="/include/head :: head" ></th:block>
+  <title>마이페이지</title>
+  <style>
+    .btn2{
+      margin-left: 2%;
+    }
+    .pwd{
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<th:block th:replace="/include/header :: header"></th:block>
+
+<!--==================================
+=            User Profile            =
+===================================-->
+<section class="dashboard section">
+  <!-- Container Start -->
+  <div class="container">
+    <!-- Row Start -->
+    <div class="row">
+      <div class="col-lg-4">
+        <th:block th:replace="/include/sidebar :: sidebar('products')"></th:block>
+      </div>
+      <div class="col-lg-8">
+        <div class="d-flex flex-column align-items-center justify-content-center right_side">
+          <h5 class="my-4" style="font-size:2.5em;font-weight:600;">회원 정보 수정</h5>
+          <form th:action="@{/member/Edit}" method="post" style="width:100%;">
+            <div class="container px-5">
+              <table class="table table-bordered mx-3">
+                <colgroup>
+                  <col style="width:20%;">
+                  <col style="width:auto;">
+                </colgroup>
+                <tbody>
+                <tr>
+                  <th class="text-center">이름</th>
+                  <td>[[${member.name }]]</td>
+                </tr>
+                <tr>
+                  <th class="text-center">아이디</th>
+                  <td>[[${member.id }]]</td>
+                </tr>
+                <tr>
+                  <th class="text-center pwd"> 비밀번호 </th>
+                    <td><button type="button"  class="btn btn-main-sm" onclick="reco()">변경</button></td>
+                </tr>
+                <tr>
+                  <th class="text-center">이메일</th>
+                  <td><input type="email" name="email" id="email" class="form-control" th:value="${member.email }" /></td>
+                </tr>
+                <tr>
+                  <th class="text-center">전화번호</th>
+                  <td><input type="text" name="tel" id="tel" class="form-control" th:value="${member.tel }" /></td>
+                </tr>
+                <tr>
+                  <th class="text-center">주소</th>
+                  <td>
+                    <input type="text" name="addr1" id="address1" th:value="${member.addr1 }" class="form-control mb-1" />
+                    <input type="text" name="addr2" id="address2" th:value="${member.addr2 }" class="form-control mb-1" />
+                    <input type="text" name="postcode" id="postcode" th:value="${member.postcode }" class="form-control">
+                    <button type="button" id="post_btn" onclick="findAddr()" class="btn btn-main-sm">우편번호 검색</button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn btn-main-sm">수정</button>
+              <a th:href="@{/member/Edit}" class="btn btn-main-sm btn2">취소</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Row End -->
+  </div>
+  <!-- Container End -->
+</section>
+
+<th:block th:replace="/include/footer :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+<script>
+    function reco() {
+        let popupOption = "width=650px, height=550px, top=150px, left=300px, scrollbar=yes";
+        let popupUrl = "/member/changePw";
+        window.open(popupUrl, 'child', popupOption);
+    }
+</script>
+</body>
+</html>

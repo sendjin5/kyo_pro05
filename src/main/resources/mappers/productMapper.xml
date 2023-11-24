@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pro05.mapper.ProductMapper">
+    <!-- 상품 목록 -->
+    <select id="productList" resultType="com.pro05.entity.ProductVO">
+        SELECT pno, cateName, pname, content, seller, price, proaddr, image, createAt, p.status, visited, heart
+        FROM product p
+        JOIN category c ON (p.cate = c.cate)
+        <where>
+            <if test="searchType != null">
+                <trim prefixOverrides="OR">
+                    <choose>
+                        <when test="searchType == 'P'.toString()">
+                            pname LIKE concat('%', #{searchKeyword}, '%')
+                        </when>
+                        <when test="searchType == 'C'.toString()">
+                            content LIKE concat('%', #{searchKeyword}, '%')
+                        </when>
+                        <when test="searchType == 'S'.toString()">
+                            seller LIKE concat('%', #{searchKeyword}, '%')
+                        </when>
+                    </choose>
+                </trim>
+            </if>
+            <if test="category != null">
+                AND p.cate = #{category}
+            </if>
+            <if test="proaddr != null">
+                AND proaddr = #{proaddr}
+            </if>
+            <if test="status == 'SALE'">
+                AND p.status='SALE'
+            </if>
+        AND p.status='SALE' or p.status = 'RESERVED'
+        </where>
+        order by pno desc limit #{postStart}, #{postScreen}
+    </select>
+    <!-- 상품 개수 구하기 -->
+    <select id="getCount" resultType="integer">
+        select count(*) FROM product p
+        JOIN category c ON (p.cate = c.cate)
+        <where>
+            <if test="searchType != null">
+                <trim prefixOverrides="OR">
+                    <choose>
+                        <when test="searchType == 'P'.toString()">
+                            pname LIKE concat('%', #{searchKeyword}, '%')
+                        </when>
+                        <when test="searchType == 'C'.toString()">
+                            content LIKE concat('%', #{searchKeyword}, '%')
+                        </when>
+                        <when test="searchType == 'S'.toString()">
+                            seller LIKE concat('%', #{searchKeyword}, '%')
+                        </when>
+                    </choose>
+                </trim>
+            </if>
+            <if test="category != null">
+                AND p.cate = #{category}
+            </if>
+            <if test="proaddr != null">
+                AND proaddr = #{proaddr}
+            </if>
+            <if test="status == 'SALE'">
+                AND p.status='SALE'
+            </if>
+            AND p.status='SALE' or p.status = 'RESERVED'
+        </where>
+    </select>
+
+    <!-- 게시글 상세보기 -->
+    <select id="productDetail" resultType="com.pro05.entity.ProductVO">
+        select pno, p.cate, cateName, pname, content, seller, price, proaddr, image, createAt, p.status, visited, heart from product p join category c on(p.cate=c.cate) where pno=#{pno}
+    </select>
+
+    <!-- 상품 등록하기 -->
+    <insert id="productInsert">
+        insert into product(pname, content, cate, seller, price, proaddr, image) values (#{pname}, #{content}, #{cate}, #{seller}, #{price}, #{proaddr}, #{image})
+    </insert>
+    <!-- 상품 수정하기 -->
+    <update id="productUpdate">
+        update product set pname=#{pname}, content=#{content}, cate=#{cate}, price=#{price}, proaddr=#{proaddr}, image=#{image}, status=#{status} where pno=#{pno}
+    </update>
+
+    <!-- 예약중으로 변경하기 -->
+    <update id="productReserved">
+        update product set status='RESERVED' where pno=#{pno}
+    </update>
+
+    <!-- 거래완료로 변경하기 -->
+    <update id="productOut">
+        update product set stauts='OUT' where pno=#{pno}
+    </update>
+
+    <!-- 판매 중으로 변경하기 -->
+    <update id="productSale">
+        update product set stauts='SALE' where pno=#{pno}
+    </update>
+
+    <!-- 상품 삭제하기 -->
+    <update id="productRemove">
+        update product set status='REMOVE' where pno=#{pno}
+    </update>
+
+    <!-- 카테고리 목록 -->
+    <select id="categories" resultType="com.pro05.entity.Category">
+        select * from category
+    </select>
+
+    <!-- 카테고리 개수 -->
+    <select id="getCateProCnt" resultType="java.util.Map">
+        SELECT cateName, COUNT(p.cate) AS cnt FROM product p RIGHT OUTER JOIN category c ON (p.cate=c.cate) GROUP BY c.cate
+    </select>
+    <select id="productGetLast" resultType="integer">
+        SELECT pno FROM product ORDER BY pno DESC LIMIT 1
+    </select>
+</mapper>
+
+

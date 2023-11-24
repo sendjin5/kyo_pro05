@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<th:block th:fragment="header">
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav class="navbar navbar-expand-lg navbar-light navigation">
+                        <a class="navbar-brand" th:href="@{/}">
+                            <img th:src="@{/images/main_logo.png}" alt="티셀파 로고" style="max-height: 43px;">
+                        </a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto main-nav ">
+                                <li class="nav-item">
+                                    <a class="nav-link" th:href="@{/}">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" th:href="@{/product/list}">중고거래</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" th:href="@{/notice/List}">공지사항</a>
+                                </li>
+                            </ul>
+
+
+                        <th:block th:if="${session.sid==null}">
+                        <ul class="navbar-nav ml-auto mt-10">
+                            <li class="nav-item">
+                                <a class="nav-link login-button" th:href="@{/member/login}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white add-button" th:href="@{/member/joinTerm}">Join</a>
+                            </li>
+                        </ul>
+                        </th:block>
+                        <th:block th:if="${session.sid!=null}">
+                            <ul class="navbar-nav ml-auto mt-10">
+                                <li class="nav-item">
+                                    <a class="nav-link login-button" th:href="@{/member/logout}">Logout</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white add-button" th:href="@{/myshop/products}">MyPage</a>
+                                    <!--<a class="nav-link text-white add-button" th:href="@{/member/myPage}">MyPage</a>-->
+                                </li>
+                                <th:block th:if="${session.sid eq 'admin'}">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white add-button" th:href="@{/admin/home(id = ${session.sid})}">관리자페이지</a>
+                                    </li>
+                                </th:block>
+                            </ul>
+                        </th:block>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+<!--    <div id="chatMenu" >
+    </div>
+    <div id="chatList" style="display: none;">
+        <ul>
+            <li></li>
+            <br>
+            <li></li>
+            <br>
+            <li></li>
+            <br>
+            <li></li>
+            <br>
+            <li></li>
+        </ul>
+    </div>-->
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var sw = true;
+            sw=!sw
+            $("#chatMenu").click(function () {
+                $("#chatList").slideToggle()
+                if(sw==true){
+                    sw = false
+                }else if(sw==false) {
+                    sw = true
+                }
+            });
+        });
+    </script>
+</header>
+</th:block>
+</body>
+
+</html>

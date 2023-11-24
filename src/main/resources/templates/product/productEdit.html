@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="/include/head :: head"></div>
+    <title>상품 수정</title>
+</head>
+<body>
+<div th:replace="/include/header.html :: header"></div>
+<section class="section bg-gray">
+    <!-- Container Start -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="product-insert">
+                    <div class="widget personal-info">
+                        <h1 class="mb-5 text-center"> 상품 수정 </h1>
+                        <form th:action="@{/product/edit}" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="pno" id="pno" th:value="${detail.pno}">
+                            <!-- 상품명 -->
+                            <div class="form-group">
+                                <label for="pname"> 상품명 </label>
+                                <input type="text" class="form-control" id="pname" name="pname" th:value="${detail.pname}" maxlength="100" required>
+                            </div>
+                            <!-- 카테고리 -->
+                            <div class="form-group">
+                                <label> 카테고리 </label>
+                                <select name="cate" id="cate" class="collapseOne w-100" style="border: 1px solid #ced4da; border-radius: 5px; padding: 8px;" th:value="${detail.cateName}">
+                                    <th:block th:each="cate : ${cateList}">
+                                        <option th:value="${cate.cate}" th:text="${cate.cateName}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <!-- 상태변경 -->
+                            <div class="form-group">
+                                <label> 판매 상태 </label>
+                                <select name="status" id="status" class="collapseOne w-100" style="border: 1px solid #ced4da; border-radius: 5px; padding: 8px;">
+                                    <option value="SALE">판매 중</option>
+                                    <option value="RESERVED">예약 중</option>
+                                    <option value="OUT">판매 완료</option>
+                                </select>
+                            </div>
+                            <!-- 가격 -->
+                            <div class="form-group">
+                                <label for="price"> 가격 </label>
+                                <input type="text" class="form-control" id="price" name="price" th:value="${detail.price}" maxlength="8" required>
+                            </div>
+                            <!-- 거래지역 -->
+                            <div class="form-group">
+                                <label for="proaddr"> 거래 지역 </label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="proaddr" name="proaddr" th:value="${detail.proaddr}">
+                                    <button type="button" id="post_btn" onclick="findAddr()" class="btn-main mb-0 mt-0" style="width:35%; display:inline-block; border: none">주소 검색</button>
+                                </div>
+                            </div>
+                            <!-- 상품 내용 -->
+                            <div class="form-group">
+                                <p> 상품 내용 </p>
+                                <textarea class="p-2" name="content" id="content" cols="100" rows="8" maxlength="1000" required placeholder="상품 설명을 입력해주세요"
+                                          style="resize: none;width: 100%;border: 1px solid #ced4da;">[[${detail.content}]]</textarea>
+                            </div>
+                            <div class="form-group">
+                                <p> 사진 미리보기 </p>
+                                <div>
+                                    <th:block th:each="image : ${detail.fileDataList}">
+                                        <img class="mr-4" th:src="@{/upload/} + ${image.savePath}+'/'+${image.saveName}" th:alt="${image.saveName}"
+                                        style="width: 200px; height: 200px">
+                                    </th:block>
+                                </div>
+                                <div id="image"></div>
+                            </div>
+                            <!-- 사진 첨부 -->
+                            <div class="form-group">
+                                <label for="upfile"> 사진 첨부 <p class="mb-0" style="color: red"> .jpg .jpeg .png 이미지만 업로드 가능합니다. </p></label>
+                                <br>
+                                <input type="hidden" th:value="${imgCount}" id="imgCount">
+                                <input type="hidden" id="deleteCount">
+                                <input type="file" class="file-input" name="upfile" id="upfile" accept=".jpg, .jpeg, .png" multiple="multiple" onchange="setThumbnail(event)">
+                                <span class="file-cta">
+                                    <span class="file-icon mb-0">
+                                        <i  class="fa fa-upload mr-0" aria-hidden="true"
+                                            style="color: #333; background: none; text-align: center;"></i>
+                                    </span>
+                                    <span class="file-label mb-0">
+                                        파일 선택 :
+                                    </span>
+                                </span>
+                                <span class="file-name">선택된 파일이 없습니다.</span>
+                                <div>
+                                    <span class="file-label mb-0">
+                                    업로드 된 이미지 :
+                                    <th:block th:each="img, iterStat : ${detail.fileDataList}">
+                                        <span th:class="'imgName'+${iterStat.index}">[[${img.getOriginName}]]
+                                            <i class="fa fa-times-circle mr-0 imgDelete" style="color: #333; background: none; height: 30px; width: 30px; cursor: pointer" aria-hidden="true" th:data-value="${img.fileNo}"></i>
+                                        </span>
+                                    </th:block>
+                                </span>
+                                </div>
+                            </div>
+                            <!-- Submit button -->
+                            <button class="btn-main-sm float-right" style="border: none;height: 40px;">수정</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container End -->
+</section>
+<script>
+    // 파일 입력 요소 변경 시 파일 이름 표시
+    $(".file-input").on("change", () => {
+        let fileName = '';
+        let fileLength = $(".file-input")[0].files.length;
+        if(fileLength > 1) {
+            fileName = fileLength + "개의 파일";
+        } else {
+            fileName = $(".file-input").val().split("\\").pop();
+        }
+        $(".file-name").text("\t 선택한 파일 : " + fileName);
+    });
+    <!-- 주소 -->
+    function findAddr(){
+        new daum.Postcode({
+            oncomplete:function(data){
+                console.log(data);
+                var bname = data.bname;
+
+                document.getElementById("proaddr").value = bname;
+            }
+        }).open();
+    }
+
+    // 이미지 미리보기
+    function setThumbnail(event) {
+        var preview = document.getElementById("image");
+
+        // 기존의 미리보기 이미지를 지움
+        preview.innerHTML = '';
+
+        for (var image of event.target.files) {
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var img = document.createElement("img");
+                img.setAttribute("src", event.target.result);
+                img.setAttribute("width", "200"); // 미리보기의 너비 설정
+                img.setAttribute("height", "200"); // 미리보기의 높이 설정
+                img.setAttribute("class", "mr-4");
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(image);
+        }
+    }
+</script>
+<script th:inline="javascript">
+    $(document).on("click", ".imgDelete", function() {
+        var fileNo = $(this).data("value"); // 이미지의 fileNo 가져오기
+        var indexToDelete = $(this).closest('span').attr('class').match(/imgName(\d+)/)[1]; // 클래스명에서 인덱스 추출
+        var imgCount = $("#imgCount").val();
+        var deleteCount = $('#imgCount').val(); // #fileCount 값 가져오기
+        $.ajax({
+            type: "GET",
+            url: "/product/imageDelete",
+            data: { fileNo: fileNo },
+            dataType: "json",
+            success: function(res) {
+                console.log("성공");
+                $(".imgName" + indexToDelete).remove(); // 해당 인덱스의 요소를 삭제
+                $("#imgCount").val(imgCount-1);
+                $("#deleteCount").val(imgCount-1);
+                // 파일 선택 요소를 찾고, required 속성 추가
+                if (deleteCount <= 1) {
+                    $('#upfile').attr('required', true);
+                } else {
+                    $('#upfile').attr('required', false);
+                }
+            },
+            error: function(err) {
+                console.log("Console:", err);
+            }
+        });
+    });
+</script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<th:block th:replace="/include/footer.html :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+</body>
+</html>

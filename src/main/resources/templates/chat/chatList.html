@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="/include/head.html :: head"></div>
+    <title>채팅</title>
+</head>
+<body>
+
+<div class="m-2">
+    <h4>채팅방 목록</h4>
+    <table class="table product-dashboard-table">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>채팅 상대</th>
+            <th>입장</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="room, roomstat: ${rooms}">
+            <td th:text="${roomstat.count}"></td>
+            <td th:text="${room.memId}"></td>
+            <td><a th:href="@{/chat/roomEnter(memId=${room.memId}, pno=${room.pno})}"><i class="fa fa-comment"></i> 채팅하기<span th:if="${room.unread>0}" th:text="${room.unread}"></span></a></td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${#lists.isEmpty(rooms)}" class="text-center">목록이 비어있습니다.</div>
+</div>
+</body>
+</html>

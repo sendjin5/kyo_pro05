@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <th:block th:replace="/include/adminhead :: head"></th:block>
+    <title>Tsellpa : 관리자</title>
+</head>
+<body>
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper">
+        <th:block th:replace="/include/adminheader :: header"></th:block>
+
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <h1>공지사항 목록</h1>
+                <div class="card p-3">
+                    <table class="table text-center mb-3" th:if="${not #lists.isEmpty(noticeList)}">
+                        <thead>
+                        <tr>
+                            <th>제목</th>
+                            <th>아이디</th>
+                            <th>등록일</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="notice : ${noticeList}">
+                            <td ><a th:href="@{/notice/Get(no=${notice.no})}" th:text="${notice.title}" ></a></td>
+                            <td th:text="${notice.author}"></td>
+                            <td th:text="${notice.resdate}"></td>
+                            <td><a class="btn btn-danger" th:no="${notice.no}" th:onclick="del(this.getAttribute('no'))">삭제하기</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-end"><a class="btn btn-primary" th:href="@{/admin/noticeInsert}">공지등록</a></div>
+
+<!--                    <th:block th:if="${not #lists.isEmpty(noticeList)}"><div th:replace="/include/pagination.html :: fragment-pagination('/admin/noticeList')"></div></th:block>-->
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                    <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+</body>
+<script th:inline="javascript">
+    function del(no){
+        if(confirm("정말 삭제하시겠습니까?")){
+            location.href = "/admin/noticeDelete?no="+no;
+        }
+        return false;
+    }
+</script>
+
+</html>
+

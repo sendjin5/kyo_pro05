@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="include/head :: head" ></th:block>
+    <title>휴면계정 해제</title>
+</head>
+<body>
+<th:block th:replace="include/header :: header" ></th:block>
+
+<section class="login py-5 border-top-1">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 align-item-center">
+                <div class="border">
+                    <h3 class="bg-gray p-4">휴면계정 해제</h3>
+                        <fieldset class="p-4">
+                            <input class="form-control mb-3" type="text" placeholder="ID" name="id" id="id" required />
+                            <input class="form-control mb-3" type="text" placeholder="Email" name="email" id="email" required />
+                            <button type="button" onclick="idSearch()" class="btn btn-primary font-weight-bold mt-3">휴면 해제</button>
+                        </fieldset>
+                        <h1 id="msg" style="display: none"></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<th:block th:replace="/include/footer :: footer"></th:block>
+
+</body>
+
+<script>
+    let popupOption = "width=650px, height=550px, top=150px, left=300px, scrollbar=yes";
+    let popupUrl = "/recomment/List";
+    window.open(popupUrl, 'child', popupOption);
+
+    function idSearch(){
+        if($("#id").val()==""){
+            alert("아이디를 입력하지 않았습니다.");
+            $("#id").focus();
+            return false;
+        } else if($("#email").val() ==""){
+            alert("아이디를 입력하지 않았습니다.");
+            $("#email").focus();
+            return false;
+        }
+        var params = {"id" : $("#id").val()};
+        $.ajax({
+            url:"/member/idCheckPro",	//아이디가 전송되어질 곳
+            type:"post",
+            data:JSON.stringify(params),
+            dataType:"json",
+            contentType:"application/json",
+            success : function(result) {
+                var idPass = result;
+                if(idPass == false){
+                    $("#idCk").val("no");
+                    $("#msg").addClass("no_check").html("<i class='fas fa-times-circle'></i> 기존에 사용되고 있는 아이디입니다. 다시 입력하시기 바랍니다.");
+                    $("#id").focus();
+                } else if(idPass == true){
+                    $("#idCk").val("yes");
+                    if($("#msg").hasClass("no_check")) {
+                        $("#msg").removeClass("no_check");
+                    }
+                    $("#msg").html("<i class='fas fa-check'></i> 사용 가능한 아이디입니다.");
+                } else if(idPass==""){
+                    $("#msg").addClass("no_check").text("<i class='fas fa-times-circle'></i> 아이디가 확인되지 않았습니다. 다시 시도하시기 바랍니다.");
+                }
+            }
+        });
+    }
+</script>
+</html>

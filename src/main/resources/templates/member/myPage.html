@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <th:block th:replace="/include/head :: head" ></th:block>
+  <title>마이페이지</title>
+</head>
+<body>
+<th:block th:replace="/include/header :: header"></th:block>
+
+<!--==================================
+=            User Profile            =
+===================================-->
+<section class="dashboard section">
+  <!-- Container Start -->
+  <div class="container">
+    <!-- Row Start -->
+    <div class="row">
+      <div class="col-lg-4">
+        <th:block th:replace="/include/sidebar :: sidebar('products')"></th:block>
+      </div>
+      <div class="col-lg-8">
+        <div class="d-flex flex-column align-items-center justify-content-center right_side">
+          <h5 class="my-4" style="font-size:2.5em;font-weight:600;">회원정보</h5>
+
+          <div class="container px-5">
+            <table class="table table-bordered mx-3">
+              <colgroup>
+                <col style="width:20%;">
+                <col style="width:auto;">
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th class="text-center">이름</th>
+                  <td>[[${member.name }]]</td>
+                </tr>
+                <tr>
+                  <th class="text-center">아이디</th>
+                  <td>[[${member.id }]]</td>
+                </tr>
+                <tr>
+                  <th class="text-center">비밀번호</th>
+                  <td>비밀번호 변경</td>
+                </tr>
+                <tr>
+                  <th class="text-center">전화번호</th>
+                  <td>[[${member.tel }]]</td>
+                </tr>
+                <tr>
+                  <th class="text-center">이메일</th>
+                  <td>[[${member.email }]]</td>
+                </tr>
+                <tr>
+                  <th class="text-center">주소</th>
+                  <td>[[${member.postcode }]] [[${member.addr1}]] [[${member.addr2}]]</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <a th:href="@{/member/Edit(id=${member.id })}" class="btn btn-primary px-3 py-2 my-4 mr-2">수정하기</a>
+            <button type="button" onclick="eventremove()" class="btn btn-success px-3 py-2 my-4"> 탈퇴하기 </button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Row End -->
+  </div>
+  <!-- Container End -->
+</section>
+
+<th:block th:replace="/include/footer :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+<script>
+  function eventremove(){
+    if(confirm("탈퇴하시겠습니까?")){
+      location.href="/member/remove?id=[[${member.id }]]"
+    }
+  }
+</script>
+</body>
+</html>

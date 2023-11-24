@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <th:block th:replace="/include/head :: head" ></th:block>
+  <title>마이페이지</title>
+</head>
+<body>
+<th:block th:replace="/include/header :: header"></th:block>
+
+<!--==================================
+=            User Profile            =
+===================================-->
+<section class="dashboard section">
+  <!-- Container Start -->
+  <div class="container">
+    <!-- Row Start -->
+    <div class="row">
+      <div class="col-lg-4">
+        <th:block th:replace="/include/sidebar :: sidebar('keywords')"></th:block>
+      </div>
+      <div class="col-lg-8">
+        <!-- Recently Favorited -->
+        <div class="widget dashboard-container my-adslist">
+          <h3 class="widget-header">키워드</h3>
+
+          <form th:action="@{/myshop/addWord}" method="post">
+            <div class="input-group mb-3" style="width: 20rem;">
+              <input type="text" class="form-control" name="word" id="word" placeholder="키워드">
+              <button class="btn btn-main-sm" type="submit">등록</button>
+            </div>
+          </form>
+
+            <!--<a href="javascript:void(0);" class="btn btn-main-sm" onclick="inputData()">등록</a>-->
+
+          <div th:if="${#lists.isEmpty(keywords)}" class="text-center">등록한 키워드가 존재하지 않습니다.</div>
+
+          <div th:unless="${#lists.isEmpty(keywords)}">
+            <!--<div th:replace="/include/searchList.html :: fragment-search('/myshop/keyword', 'pname:상품명')"></div>-->
+            <!-- include하는 main화면에서 options를 넘겨줄 때 하나의 옵션을 ,(반점)으로 구분한다. -->
+            <!-- 이때 콜론 왼쪽에는 DB 테이블의 컬럼 이름이, 오른쪽에는 사용자에게 표시될 이름을 입력한다. -->
+            <p class="text-dark font-weight-bold">전체 [[${page.postTotal}]]개</p>
+
+            <table class="table" id="list">
+              <thead>
+              <tr>
+                <th class="text-center">키워드</th>
+                <th class="text-center">관리</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="keyword : ${keywords}">
+                <td class="text-center align-middle" style="width: 30%;">
+                  <span class="categories" th:text="${keyword.word}"></span>
+                </td>
+                <td class="action" data-title="Action">
+                  <div class="">
+                    <ul class="list-inline justify-content-center">
+                      <li class="list-inline-item">
+                        <a th:href="@{/myshop/keywordRemove(kno=${keyword.kno})}" class="delete" data-toggle="tooltip" data-placement="top" title="삭제" >
+                          <i class="fa fa-trash"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <th:block th:if="${not #lists.isEmpty(keywords)}">
+          <div th:replace="/include/pagination.html :: fragment-pagination('/myshop/keyword')"></div>
+        </th:block>
+
+      </div>
+    </div>
+    <!-- Row End -->
+  </div>
+  <!-- Container End -->
+</section>
+
+<th:block th:replace="/include/footer :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+</body>
+</html>

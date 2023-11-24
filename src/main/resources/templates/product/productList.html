@@ -1,60 +1,181 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>메인 페이지</title>
+    <div th:replace="/include/head :: head"></div>
+    <title>상품 목록</title>
+    <style>
+        p {
+            margin-bottom: 0;}
+        .btn {
+            background-color: inherit;
+            color: inherit;
+            padding: 0 3.5rem;
+            line-height: 3;
+        }
+    </style>
 </head>
 <body>
+<div th:replace="/include/header.html :: header"></div>
+<section class="section-sm">
+    <div class="container">
+        <div class="btn-group mb-2" style="margin-left: 1000px">
+            <a th:href="@{/product/insert}" th:if="${session.sid != null}"
+               class="add-button nav-link text-white" style="background-color: #5672f9; border: none;">상품 등록</a>
+        </div>
+        <div th:replace="/include/searchList :: fragment-search('/product/list', 'P:상품명,C:내용,S:판매자')"></div>
+        <div class="row">
+            <div class="col-lg-3 col-md-4">
+                <div class="category-sidebar">
+                    <div class="widget category-list">
+                        <h4 class="widget-header">카테고리</h4>
+                        <ul class="category-list">
+                            <li th:style="${curCategory ne null ? '' : 'color : blue'}" style="color: blue">
+                                <a th:href="@{/product/list}" th:text="전체"></a>
+                            </li>
+                            <li th:each="cate : ${categories}">
+                                <a th:href="@{/product/list(cate=${cate.cate})}" th:value="${cate.cate}" th:text="${cate.cateName}" th:style="${cate.cate eq curCategory ? 'color : blue' : ''}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="widget category-list">
+                        <h4 class="widget-header">조건</h4>
+                        <ul class="category-list">
+                            <li th:style="${proaddr != null ? 'color : blue' : ''}">
+                                <input type="hidden" id="proaddrVal" th:data-value="${session.proaddr}">
+                                <a id="proaddrBtn" style="cursor: pointer"> 내 지역만 보기 </a>
+                            </li>
+                            <li th:style="${status != null ? 'color : blue' : ''}">
+                                <a id="statusBtn" style="cursor: pointer"> 판매중인 상품 보기 </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-8">
+                <div class="product-grid-list">
+                    <div class="row mt-30">
+                        <div class="col-lg-4 col-md-6"  th:each="list : ${productList}">
+                            <!-- product card -->
+                            <div class="product-item bg-light">
+                                <div class="card">
+                                    <div class="thumb-content">
+                                        <div class="price" th:if="${list.price eq 0}" th:text="나눔"></div>
+                                        <div class="price" th:if="${list.price ne 0}">[[${list.price}]] 원</div>
+                                        <a th:href="@{/product/detail(pno=${list.pno})}">
+                                            <th:block th:if="${!list.fileDataList.isEmpty()}">
+                                                <img class="card-img-top img-fluid" style="width: 255px; height: 255px;" th:src="@{/images/} + ${list.fileDataList[0].saveName}">
+<!--                                                <img class="card-img-top img-fluid" style="width: 255px; height: 255px;" th:src="@{/images/} + ${list.fileDataList[0].savePath}+'/'+${list.fileDataList[0].saveName}">-->
+                                            </th:block>
+                                            <th:block th:if="${list.fileDataList.isEmpty()}">
+                                                <img class="card-img-top img-fluid" style="width: 255px; height: 255px;" th:src="@{/images/no_image.png}">
+                                            </th:block>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title"><a th:href="@{/product/detail(pno=${list.pno})}" th:text="${list.pname}"></a></h4>
+                                        <ul class="list-inline product-meta">
+                                            <li class="list-inline-item">
+                                                <p><i class="fa fa-folder-open-o mr-1" aria-hidden="true"></i>[[${list.cateName}]]</p>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <p><i class="fa fa-calendar mr-1" aria-hidden="true"></i>[[${#dates.format(list.createAt, 'yyyy-MM-dd')}]]</p>
+                                            </li>
+                                            <li class="list-inline-item" th:if="${!list.proaddr.isEmpty()}">
+                                                <p><i class="fa fa-location-arrow mr-1" aria-hidden="true" ></i>[[${list.proaddr}]]</p>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <p><i class="fa fa-user mr-1" aria-hidden="true"></i>[[${list.seller}]]</p>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <p th:if="${list.status eq 'SALE'}"><i class="fa fa-bookmark mr-1" aria-hidden="true"></i>판매 중</p>
+                                                <p th:if="${list.status eq 'RESERVED'}" style="color: #5672f9"><i class="fa fa-bookmark mr-1" aria-hidden="true"></i>예약 중</p>
+                                                <p th:if="${list.status eq 'OUT'}" style="color: #ff3333"><i class="fa fa-bookmark mr-1" aria-hidden="true"></i>판매 완료</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-grid-list" th:if="${productList.isEmpty()}">
+                    <p class="text-center"> 등록된 상품이 없습니다. </p>
+                </div>
+                <th:block th:if="${not #lists.isEmpty(productList)}"><div th:replace="/include/pagination.html :: fragment-pagination('/product/list')"></div></th:block>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    // 내 주소만 보기 버튼
+    $("#proaddrBtn").click(function () {
+        // 로그인 한 유저의 addr3 정보
+        var proaddrVal = $("#proaddrVal").data("value");
 
-<table style="display:block;">
-    <button type="button" id="btn1">전체지역</button>
-    <button type="button" id="btn2">해당지역</button>
-    <thead>
-        <tr>
-            <th>지역</th>
-            <th>썸네일</th>
-            <th>상품 제목</th>
-            <th>아이디</th>
-            <th>가격</th>
-        </tr>
-    </thead>
-    <tbody>
-    <tr th:each="pro : ${proAllList}" id="proAllList" style="display: block">
-        <td th:text="${pro.addr1}"></td>
-        <td th:text="${pro.thumbnail}"></td>
-        <td ><a th:href="@{/product/Get(pno=${pro.pno})}" th:text="${pro.title}" ></a></td>
-        <td th:text="${pro.userId}"></td>
-        <td th:text="${pro.price}"></td>
-        <td><a th:href="@{/product/Del(pno=${pro.getPno()})}">삭제하기</a></td>
-    </tr>
-    <tr th:each="sel : ${proSelList}" id="proSelList" style="display: none">
-        <td th:text="${sel.addr1}"></td>
-        <td th:text="${sel.thumbnail}"></td>
-        <td ><a th:href="@{/product/Get(pno=${sel.pno})}" th:text="${sel.title}" ></a></td>
-        <td th:text="${sel.userId}"></td>
-        <td th:text="${sel.price}"></td>
-        <td><a th:href="@{/product/Del(pno=${sel.getPno()})}">삭제하기</a></td>
-    </tr>
-    </tbody>
-</table>
-<div>
-    <a th:href="@{/product/Add}">상품등록</a>
-    <a th:href="@{/product/TemAdd}">임시등록 리스트</a>
-</div>
-</body>
-<script th:inline="javascript">
-    $(document).ready(function() {
-        $("#btn1").click(function () {
-            $("#proAllList").css("display", "block");
-            $("#proSelList").css("display", "none");
-        })
-    })
-        $(document).ready(function() {
-        $("#btn2").click(function () {
-            $("#proAllList").css("display", "none");
-            $("#proSelList").css("display", "block");
-        });
+        // 로그인을 하지 않았으면 로그인 알림창 띄우기
+        if (!proaddrVal) {
+            alert("로그인을 해주세요");
+        } else {
+            // 현재 URL
+            var currentUrl = new URL(window.location.href);
+
+            // proaddr 파라미터 추가 또는 갱신
+            currentUrl.searchParams.set('proaddr', proaddrVal);
+
+            // 페이지 값을 항상 1로 설정
+            currentUrl.searchParams.set('page', '1');
+
+            window.location.href = currentUrl.href;
+        }
+
     });
-</script>
+
+    $("#statusBtn").click(function () {
+        // 현재 URL
+        var currentUrl = window.location.href;
+        var newStatus = 'SALE';
+        var newPage = '1';
+
+        // URL에서 status 매개변수 확인
+        var hasStatusParameter = currentUrl.indexOf('status=') !== -1;
+
+        if (hasStatusParameter) {
+            // status 매개변수 값을 SALE로 변경
+            var updatedUrl = currentUrl.replace(/([&?]status=)[^&]+/, '$1' + newStatus);
+        } else {
+            // status 매개변수가 없으면 URL에서 해당 부분 삭제
+            var separator = currentUrl.indexOf('?') !== -1 ? '&' : '?';
+            var newUrl = currentUrl + separator + 'status=' + newStatus;
+
+            // 기존 페이지 값이 있는지 확인 후 새 URL로 이동
+            if (currentUrl.indexOf('page=') !== -1) {
+                window.location.href = newUrl.replace(/([&?]page=)[^&]+/, '$1' + newPage);
+            } else {
+                window.location.href = newUrl + '&page=' + newPage;
+            }
+            return;
+        }
+
+        // 버튼 비활성화
+        $(this).prop('disabled', true);
+
+        // URL에서 page 매개변수 확인
+        if (updatedUrl.indexOf('page=') !== -1) {
+            // page 매개변수 값이 있으면 값을 1로 변경
+            updatedUrl = updatedUrl.replace(/([&?]page=)[^&]+/, '$1' + newPage);
+        } else {
+            // page 매개변수가 없으면 새로 추가
+            var separator = updatedUrl.indexOf('?') !== -1 ? '&' : '?';
+            updatedUrl += separator + 'page=' + newPage;
+        }
+            // 새 URL로 이동
+            window.location.href = updatedUrl;
+    });
+    </script>
+<th:block th:replace="/include/footer.html :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+
+</body>
 </html>

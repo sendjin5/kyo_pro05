@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+.contenter {
+    margin-top: 1rem;
+    min-height: 80vh;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+

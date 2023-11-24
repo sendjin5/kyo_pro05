@@ -3,24 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입 폼</title>
-    <script type="text/javascript" src="/static/cleditor/jquery.cleditor.js"></script>
-    <link rel="stylesheet" href="/static/cleditor/jquery.cleditor.css">
+    <title>자주쓰는 답변</title>
+    <th:block th:replace="include/head :: head" ></th:block>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 5px 20px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h2>보드 등록</h2>
-        <form th:action="@{/recomment/Add}" autocomplete="off" method="post">
+        <h2>자주쓰는 답변 등록</h2>
+        <form th:action="@{/recomment/Add}" method="post">
             <div>
-                <label th:for="id_no">번호</label>
-                <input type="number" name="id_no" placeholder="id_no" required>
+                <input type="hidden" name="mem_id" th:value="${mem.id }">
             </div>
             <div>
                 <label th:for="comment">내용</label>
-                <textarea name="comment" id="comment" class="textarea" rows="8" cols="100" maxlength="200" required></textarea>
+                <textarea name="comment" id="comment" class="textarea" rows="8" cols="100" maxlength="40" required></textarea>
             </div>
             <div>
-                <button type="submit">등록</button>
+                <button type="submit" class="btn">등록</button>
+                <a th:href="@{/recomment/List}" class="btn" >뒤로</a>
             </div>
         </form>
     </div>

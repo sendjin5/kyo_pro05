@@ -3,48 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" th:href="@{/images/logo.png}">
-    <link rel="stylesheet" href="/css/pure-min.css">
-    <link rel="stylesheet" href="/css/grids-responsive-min.css">
-    <link rel="stylesheet" href="/css/styles.css">
-    <meta id="_csrf" name="_csrf" content="${_csrf.token}"/>
-    <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}"/>
+    <th:block th:replace="include/head :: head" ></th:block>
     <title>자주쓰는 답변</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 10px;
+            padding: 0;
+            display: block;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px;
+            border-collapse: collapse;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        button {
+            background-color: #008CBA;
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: #008CBA;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        #comment {
+            overflow: hidden;
+            width: 200px;
+        }
+
+        #btn {
+            display: block;
+            margin-right: 10%;
+        }
+        #colspan {
+            text-align: center;
+        }
+        .th1 {width: 10%;}
+        .th2 {width: 60%; text-align: left;}
+        .th3 {width: 15%}
+        .th4 {width: 15%}
+    </style>
 </head>
 <body>
-
 <table>
     <thead>
         <tr>
-            <th>번호</th>
-            <th>순번</th>
-            <th>내용</th>
-            <th>아이디 넘버</th>
-            <th>사용</th>
-            <th>삭제</th>
+            <th class="th1">번호</th>
+            <th class="th2">내용</th>
+            <th class="th3">사용</th>
+            <th class="th4">삭제</th>
         </tr>
     </thead>
     <tbody>
-    <tr th:each="reco, num : ${recommentList}">
-        <td th:text="${num.count}"></td>
-        <td th:text="${reco.no}"></td>
-        <td th:text="${reco.comment}" ></td>
-        <td th:text="${reco.id_no}"></td>
-        <td><button type="button" th:com="${reco.getComment()}" onclick="choice(this.getAttribute('com'))">사용</button></td>
-        <td><a th:href="@{/recomment/Del(no=${reco.getNo()})}">삭제하기</a></td>
-    </tr>
+        <tr th:each="reco, num : ${recommentList }">
+            <td th:text="${num.count }" class="th1"></td>
+            <td th:text="${reco.comment }" id="comment" class="th2"></td>
+            <td class="th3"><button type="button" th:com="${reco.getComment() }" onclick="choice(this.getAttribute('com'))">사용</button></td>
+            <td class="th4"><a th:href="@{/recomment/Del(no=${reco.getNo()})}" onclick="eventremove()">삭제하기</a></td>
+        </tr>
+        <tr th:if="${recommentList.size() == 0}">
+            <td colspan="4" id="colspan">목록이 존재하지 않습니다.</td>
+        </tr>
     </tbody>
 </table>
-
-<div th:if="${recommentList.size() < 5}">
+<div th:if="${recommentList.size() < 5}" id="btn">
     <a th:href="@{/recomment/Add}">자주 쓰는 글 등록</a>
 </div>
+
 <script>
     function choice(comment){
         if(window.confirm("문구를 사용할 경우 현재 작성한 문구는 사라집니다.")) {
-            opener.document.fm.content.value = comment;
+            window.opener.document.getElementById('content').value = comment;
             window.close();
         }
+    }
+
+    function eventremove(){
+        confirm("삭제하시겠습니까?")
     }
 
 </script>

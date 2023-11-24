@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<th:block th:replace="/include/head :: head" ></th:block>
+	<title>마이페이지</title>
+	<style>
+		td a span {
+			float: right;
+			background: #F4F7F9;
+			float: right;
+			font-size: 10px;
+			border-radius: 8px;
+			padding: 3px 8px;
+			color: #84919B;
+		}
+	</style>
+</head>
+<body>
+<th:block th:replace="/include/header :: header"></th:block>
+
+<!--==================================
+=            User Profile            =
+===================================-->
+<section class="dashboard section">
+	<!-- Container Start -->
+	<div class="container">
+		<!-- Row Start -->
+		<div class="row">
+			<div class="col-lg-4">
+				<th:block th:replace="/include/sidebar :: sidebar('chat')"></th:block>
+			</div>
+
+
+			<div class="col-lg-8">
+				<table class="table product-dashboard-table">
+					<thead>
+					<tr>
+						<th>번호</th>
+						<th>채팅 상대</th>
+						<th>입장</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="room, roomstat: ${rooms}">
+						<td th:text="${roomstat.count}"></td>
+						<td th:if="${room.seller eq session.sid}" th:text="${room.memId}"></td>
+						<td th:unless="${room.seller eq session.sid}" th:text="${room.seller}"></td>
+						<td><a th:href="@{/chat/roomEnter(memId=${room.memId}, pno=${room.pno})}"><i class="fa fa-comment"></i> 채팅하기<span th:if="${room.unread>0}" th:text="${room.unread}"></span></a></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!-- Row End -->
+	</div>
+	<!-- Container End -->
+</section>
+
+<th:block th:replace="/include/footer :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+
+<script th:inline="javascript">
+	function eventRemove(){
+		console.log("eventRemove activate");
+		if(confirm("탈퇴하시겠습니까?")){
+			location.href="/member/remove?id="+[[${member.id }]];
+		}
+	}
+</script>
+
+</body>
+</html>

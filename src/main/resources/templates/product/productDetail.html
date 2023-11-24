@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="/include/head.html :: head"></div>
+    <title th:text="${detail.pname}"></title>
+    <style>
+        .detail-button.nav-link.text-white {
+            background-color: #5672f9; border: none; margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="/include/header.html :: header"></div>
+<section class="section bg-gray">
+    <!-- Container Start -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="btn-group float-right">
+                    <a id="buyer-chat" th:unless="${session.sid eq detail.seller}" class="detail-button nav-link text-white">채팅하기</a>
+                    <a id="seller-chat" th:if="${session.sid eq detail.seller}" class="detail-button nav-link text-white">채팅하기</a>
+                    <a th:href="@{/product/list}" class="detail-button nav-link text-white">목록</a>
+                    <a th:href="@{/product/edit(pno=${detail.pno})}" th:if="${session.sid eq detail.seller || session.sid eq 'admin'}" class="detail-button nav-link text-white" style="background-color: #5672f9; border: none;">수정</a>
+                    <a th:href="@{/product/delete(pno=${detail.pno})}" th:if="${session.sid eq detail.seller || session.sid eq 'admin'}" class="detail-button nav-link text-white" style="background-color: #5672f9; border: none;">삭제</a>
+                </div>
+                <div class="product-details">
+                    <h1 class="product-title" th:text="${detail.pname}"></h1>
+                    <div class="product-meta">
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><i class="fa fa-user-o"></i> 판매자 : <span th:text="${detail.seller}"></span></li>
+                            <li class="list-inline-item"><i class="fa fa-folder-open-o"></i> 카테고리 : <span th:text="${detail.cateName}"></span></li>
+                            <li class="list-inline-item"><i class="fa fa-location-arrow"></i> 거래지역 : <span th:text="${detail.proaddr}"></span></li>
+                        </ul>
+                    </div>
+                    <div id="carouselExampleIndicators" class="product-slider carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            <li th:each="btn, iterStat : ${detail.fileDataList}"
+                                th:data-slide-to="__${iterStat.index}__"
+                                data-target="#carouselExampleIndicators"
+                                th:class="${iterStat.index == 0} ? 'active' : ''"
+                                style="border-radius: 100%;height: 1px;width: 20px;">
+                            </li>
+                        </ol>
+                        <div class="carousel-inner" id="carouselInner">
+                            <th:block th:each="image, iterStat : ${detail.fileDataList}">
+                                <div th:class="${iterStat.index == 0} ? 'carousel-item active' : 'carousel-item'">
+                                    <img class="d-block" style="width: 800px; height: 500px; margin: 0 auto"
+                                         th:src="@{/images/} + ${image.saveName}"
+                                         th:alt="${image.originName}">
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                    <div class="content mt-5 pt-5">
+                        <div class="text-center mb-3">
+                            <input type="hidden" id="heart-check" th:value="${flag}">
+                            <img th:src="@{/images/heart_before.png}" alt="찜" id="heart-img" style="width: 2rem">
+                            <span th:text="${detail.heart}" id="heart-count"></span>
+                        </div>
+
+                        <ul class="nav nav-pills justify-content-center" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home"
+                                   aria-selected="true">제품 상세 설명</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile"
+                                   aria-selected="false">제품 정보</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                                <h3 class="tab-title">상품 설명</h3>
+                                <p th:text="${detail.content}"></p>
+                            </div>
+                            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                <h3 class="tab-title">상품 정보</h3>
+                                <table class="table table-bordered product-table">
+                                    <tbody>
+                                    <tr>
+                                        <td> 가격 </td>
+                                        <td >[[${detail.price}]] 원</td>
+                                    </tr>
+                                    <tr>
+                                        <td> 거래 지역 </td>
+                                        <td th:text="${detail.proaddr}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td> 등록일 </td>
+                                        <td th:text="${#dates.format(detail.createAt, 'yyyy-MM-dd')}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td> 판매 상태 </td>
+                                        <td th:if="${detail.status eq 'SALE'}"> 판매 중 </td>
+                                        <td th:if="${detail.status eq 'RESERVED'}"> 예약 중 </td>
+                                        <td th:if="${detail.status eq 'OUT'}"> 판매 완료 </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container End -->
+</section>
+<th:block th:replace="/include/footer.html :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+
+<script th:inline="javascript">
+    $(document).ready(function () {
+        let pno =[[${detail.pno}]];
+        let uid = [[${uid}]];
+        let seller = [[${detail.seller}]];
+
+        let heartImage = document.getElementById("heart-img");
+        let heartFlag = document.getElementById('heart-check').value;
+        // 이미 찜했다면 빨간 하트
+        if (heartFlag > 0) {
+            heartImage.src = /*[[@{/images/heart_after.png}]]*/ '';
+        } else {
+            heartImage.src = /*[[@{/images/heart_before.png}]]*/ '';
+        }
+
+        // 하트를 클릭 시 실행되는 코드
+        $("#heart-img").on("click", function () {
+            //console.log('클릭한 uid:'+uid);
+            if (!uid) {
+                alert("찜은 로그인 후에 가능합니다."); // 로그인되어 있지 않으면 경고창 표시
+                return; // 함수 종료
+            }
+            if (uid === seller) {
+                alert("자신의 상품은 찜할 수 없습니다.");
+                return;
+            }
+
+            $.ajax({
+                url: '/product/wish',
+                type: 'POST',
+                data: {'pno': pno, 'uid': uid},
+                success: function (response) {
+                    let res = response.res;
+                    if (res > 0) {
+                        heartImage.src = /*[[@{/images/heart_after.png}]]*/ '';
+                    } else if (res < 0) {
+                        heartImage.src = /*[[@{/images/heart_before.png}]]*/ '';
+                    }
+                    $("#heart-count").html(response.heartCnt);
+                }, error: function () {
+                    console.log('에러 발생')
+                }
+            });
+        });
+    });
+
+    $("#buyer-chat").click(function(){
+        let sid = [[${session.sid}]];
+        let pno = [[${detail.pno}]];
+        let hyperlink = `/chat/roomEnter?memId=${sid}&pno=${pno}`;
+        window.open(hyperlink, "_child", "width=420, height=700, top=100, left=100, location=no, menubar=no, toolbar=no");
+    });
+
+    $("#seller-chat").click(function(){
+        let pno = [[${detail.pno}]];
+        let hyperlink = `/chat/roomList?pno=${pno}`;
+        window.open(hyperlink, "_child", "width=420, height=700, top=100, left=100, location=no, menubar=no, toolbar=no");
+    });
+
+</script>
+</body>
+</html>

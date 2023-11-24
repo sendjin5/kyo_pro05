@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<!--
+ // WEBSITE: https://themefisher.com
+ // TWITTER: https://twitter.com/themefisher
+ // FACEBOOK: https://www.facebook.com/themefisher
+ // GITHUB: https://github.com/themefisher/
+-->
+
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+
+  <!-- ** Basic Page Needs ** -->
+  <meta charset="utf-8">
+  <title>Classimax | Classified Marketplace Template</title>
+
+<th:block th:replace="/include/head.html :: head"></th:block>
+
+</head>
+
+<body class="body-wrapper">
+
+<header>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav class="navbar navbar-expand-lg navbar-light navigation">
+					<a class="navbar-brand" href="index.html">
+						<img src="images/logo.png" alt="">
+					</a>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+					 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<ul class="navbar-nav ml-auto main-nav ">
+							<li class="nav-item @@home">
+								<a class="nav-link" href="index.html">Home</a>
+							</li>
+							<li class="nav-item dropdown dropdown-slide @@dashboard">
+								<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#!">Dashboard<span><i class="fa fa-angle-down"></i></span>
+								</a>
+
+								<!-- Dropdown list -->
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item @@dashboardPage" href="dashboard.html">Dashboard</a></li>
+									<li><a class="dropdown-item @@dashboardMyAds" href="dashboard-my-ads.html">Dashboard My Ads</a></li>
+									<li><a class="dropdown-item @@dashboardFavouriteAds" href="dashboard-favourite-ads.html">Dashboard Favourite Ads</a></li>
+									<li><a class="dropdown-item @@dashboardArchivedAds" href="dashboard-archived-ads.html">Dashboard Archived Ads</a></li>
+									<li><a class="dropdown-item @@dashboardPendingAds" href="dashboard-pending-ads.html">Dashboard Pending Ads</a></li>
+									
+									<li class="dropdown dropdown-submenu dropright">
+										<a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0501" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
+					
+										<ul class="dropdown-menu" aria-labelledby="dropdown0501">
+											<li><a class="dropdown-item" href="index.html">Submenu 01</a></li>
+											<li><a class="dropdown-item" href="index.html">Submenu 02</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class="nav-item dropdown dropdown-slide active">
+								<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									Pages <span><i class="fa fa-angle-down"></i></span>
+								</a>
+								<!-- Dropdown list -->
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item @@about" href="about-us.html">About Us</a></li>
+									<li><a class="dropdown-item active" href="contact-us.html">Contact Us</a></li>
+									<li><a class="dropdown-item @@profile" href="user-profile.html">User Profile</a></li>
+									<li><a class="dropdown-item @@404" href="404.html">404 Page</a></li>
+									<li><a class="dropdown-item @@package" href="package.html">Package</a></li>
+									<li><a class="dropdown-item @@singlePage" href="single.html">Single Page</a></li>
+									<li><a class="dropdown-item @@store" href="store.html">Store Single</a></li>
+									<li><a class="dropdown-item @@blog" href="blog.html">Blog</a></li>
+									<li><a class="dropdown-item @@singleBlog" href="single-blog.html">Blog Details</a></li>
+									<li><a class="dropdown-item @@terms" href="terms-condition.html">Terms &amp; Conditions</a></li>
+								</ul>
+							</li>
+							<li class="nav-item dropdown dropdown-slide @@listing">
+								<a class="nav-link dropdown-toggle" href="#!" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									Listing <span><i class="fa fa-angle-down"></i></span>
+								</a>
+								<!-- Dropdown list -->
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item @@category" href="category.html">Ad-Gird View</a></li>
+									<li><a class="dropdown-item @@listView" href="ad-list-view.html">Ad-List View</a></li>
+									
+									<li class="dropdown dropdown-submenu dropleft">
+										<a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0201" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
+					
+										<ul class="dropdown-menu" aria-labelledby="dropdown0201">
+											<li><a class="dropdown-item" href="index.html">Submenu 01</a></li>
+											<li><a class="dropdown-item" href="index.html">Submenu 02</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<ul class="navbar-nav ml-auto mt-10">
+							<li class="nav-item">
+								<a class="nav-link login-button" href="login.html">Login</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link text-white add-button" href="ad-listing.html"><i class="fa fa-plus-circle"></i> Add Listing</a>
+							</li>
+						</ul>
+					</div>
+				</nav>
+			</div>
+		</div>
+	</div>
+</header>
+
+<!-- page title -->
+<!--================================
+=            Page Title            =
+=================================-->
+<section class="page-title">
+	<!-- Container Start -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 offset-md-2 text-center">
+				<!-- Title text -->
+				<h3>Contact Us</h3>
+			</div>
+		</div>
+	</div>
+	<!-- Container End -->
+</section>
+<!-- page title -->
+
+<!-- contact us start-->
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="contact-us-content p-4">
+                    <h5>Contact Us</h5>
+                    <h1 class="pt-3">Hello, what's on your mind?</h1>
+                    <p class="pt-3 pb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla elit dolor, blandit vel euismod ac, lentesque et dolor. Ut id tempus ipsum.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                    <form action="#">
+                        <fieldset class="p-4">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-lg-6 py-2">
+                                        <input type="text" placeholder="Name *" class="form-control" required>
+                                    </div>
+                                    <div class="col-lg-6 pt-2">
+                                        <input type="email" placeholder="Email *" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <select name="" id="" class="form-control w-100">
+                                <option value="1">Select Category</option>
+                                <option value="1">Laptop</option>
+                                <option value="1">iPhone</option>
+                                <option value="1">Monitor</option>
+                                <option value="1">I need</option>
+                            </select>
+                            <textarea name="message" id=""  placeholder="Message *" class="border w-100 p-3 mt-3 mt-lg-4"></textarea>
+                            <div class="btn-grounp">
+                                <button type="submit" class="btn btn-primary mt-2 float-right">SUBMIT</button>
+                            </div>
+                        </fieldset>
+                    </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- contact us end -->
+
+<th:block th:replace="/include/footer.html :: footer"></th:block>
+<th:block th:replace="/include/script :: script"></th:block>
+
+
+</body>
+
+</html>
